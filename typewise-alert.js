@@ -11,18 +11,16 @@ function inferBreach(value, lowerLimit, upperLimit) {
 
 function classifyTemperatureBreach(coolingType, temperatureInC) {
   let lowerLimit = 0;
-  let upperLimit = 0;
-  if (coolingType == 'PASSIVE_COOLING') {
-    lowerLimit = 0;
-    upperLimit = 35;
-  } else if (coolingType == 'HI_ACTIVE_COOLING') {
-    lowerLimit = 0;
-    upperLimit = 45;
-  } else if (coolingType == 'MED_ACTIVE_COOLING') {
-    lowerLimit = 0;
-    upperLimit = 40;
-  }
+  let upperLimit = getUpperLimit(coolingType);
   return inferBreach(temperatureInC, lowerLimit, upperLimit);
+}
+
+function getUpperLimit(coolingType){
+  return {
+    PASSIVE_COOLING: 35,
+    HI_ACTIVE_COOLING: 45,
+    MED_ACTIVE_COOLING: 40
+  }[coolingType];
 }
 
 function checkAndAlert(alertTarget, batteryChar, temperatureInC) {
@@ -42,12 +40,15 @@ function sendToController(breachType) {
 function sendToEmail(breachType) {
   const recepient = 'a.b@c.com';
   if (breachType == 'TOO_LOW') {
-    console.log(`To: ${recepient}`);
-    console.log('Hi, the temperature is too low');
+    showConsoleMessage(recepient,'low');
   } else if (breachType == 'TOO_HIGH') {
-    console.log(`To: ${recepient}`);
-    console.log('Hi, the temperature is too high');
+    showConsoleMessage(recepient,'high');
   }
+}
+
+function showConsoleMessage(recepient,tempMode){
+  console.log(`To: ${recepient}`);
+  console.log(`Hi, the temperature is too ${tempMode}`);
 }
 
 module.exports =
